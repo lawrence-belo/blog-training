@@ -28,6 +28,15 @@ class LoginController extends Controller
     protected $redirectTo = '/home';
 
     /**
+     * Override laravel's default email login with a username login
+     * @return string
+     */
+    public function username()
+    {
+        return 'username';
+    }
+
+    /**
      * Create a new controller instance.
      *
      * @return void
