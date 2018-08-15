@@ -75,11 +75,11 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('role_id') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
                             <label for="email" class="col-md-4 control-label">Role</label>
 
                             <div class="col-md-6">
-                                <select id="role_id" class="form-control" name="role_id" value="{{ old('role_id') }}" required>
+                                <select id="role" class="form-control" name="role" value="{{ old('role') }}" required>
                                     <option value="0">user</option>
                                     <option value="1">admin</option>
                                 </select>
