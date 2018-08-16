@@ -23,7 +23,7 @@
                         <td>{{ $user->created_at }}</td>
                         <td>{{ $user->updated_at }}</td>
                         <td>
-                            <a href="#" class="btn btn-xs btn-primary">Update</a>
+                            <a href="{{ url('update_user/' . $user->id) }}" class="btn btn-xs btn-primary">Update</a>
                             <a href="#" class="btn btn-xs btn-danger">Delete</a>
                         </td>
                     </tr>
