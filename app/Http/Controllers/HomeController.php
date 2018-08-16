@@ -29,11 +29,18 @@ class HomeController extends Controller
     }
 
     /**
+     * Remove user from user list (soft delete: see User model)
+     *
      * @param int $user_id
      */
     public function deleteUser($user_id)
     {
-        //do something
+        $user = User::findOrFail($user_id);
+        $username = $user->username;
+
+        $user->delete();
+
+        return redirect('/home')->with('status', 'User <b>' . $username . '</b> has been successfully deleted!');
     }
 
     /**

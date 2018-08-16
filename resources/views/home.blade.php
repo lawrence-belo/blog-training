@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container">
+    @if (session('status'))
+        <div class="alert alert-success">{!! session('status') !!}</div>
+    @endif
     <div class="row">
         <table class="table">
             <thead>
@@ -24,7 +27,7 @@
                         <td>{{ $user->updated_at }}</td>
                         <td>
                             <a href="{{ url('update_user/' . $user->id) }}" class="btn btn-xs btn-primary">Update</a>
-                            <a href="#" class="btn btn-xs btn-danger">Delete</a>
+                            <a href="{{ url('delete_user/' . $user->id) }}" class="btn btn-xs btn-danger">Delete</a>
                         </td>
                     </tr>
                 @endforeach
