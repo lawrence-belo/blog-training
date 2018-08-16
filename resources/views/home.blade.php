@@ -6,6 +6,7 @@
         <div class="alert alert-success">{!! session('status') !!}</div>
     @endif
     <div class="row">
+        <h3>User List</h3>
         <table class="table">
             <thead>
                 <tr>
