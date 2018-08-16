@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Seeder;
 
+use Faker\Factory as Faker;
+
 class UsersTableSeeder extends Seeder
 {
     /**
@@ -11,6 +13,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        // these two users are needed so we have some known login credentials
         DB::table('users')->insert([
             [
                 'username'   => 'testuser1',
@@ -27,5 +30,17 @@ class UsersTableSeeder extends Seeder
                 'password'   => bcrypt('abcd1234')
             ]
         ]);
+
+        // these fake users are just for testing pagination
+        $faker = Faker::create();
+        for ($i = 0; $i < 50; $i++) {
+            DB::table('users')->insert([
+                'username'   => $faker->unique->username,
+                'first_name' => $faker->firstName,
+                'last_name'  => $faker->lastName,
+                'role'       => rand(0,1),
+                'password'   => bcrypt('abcd1234')
+            ]);
+        }
     }
 }
