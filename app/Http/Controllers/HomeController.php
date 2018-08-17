@@ -25,7 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', ['users' =>  User::orderBy('last_name')->paginate(10)]);
+        return view('users', ['users' =>  User::orderBy('last_name')->paginate(10)]);
     }
 
     /**

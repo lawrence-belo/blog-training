@@ -17,7 +17,15 @@ Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
+
+    // users
     Route::get('/update_user/{id}', 'HomeController@updateUser');
     Route::post('/save_user_update', 'HomeController@saveUserUpdates')->name('save_user_update');
     Route::get('/delete_user/{id}', 'HomeController@deleteUser');
+
+    // article categories
+    Route::get('/categories', 'ArticleCategoryController@index');
+    Route::post('/add_category', 'ArticleCategoryController@addCategory');
+    Route::post('/update_category/{id}', 'ArticleCategoryController@updateCategory');
+    Route::get('/delete_category/{id}', 'ArticleCategoryController@deleteCategory');
 });
