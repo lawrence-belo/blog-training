@@ -29,10 +29,10 @@ class ArticleController extends Controller
     public function saveNewArticle(Request $request)
     {
         $request->validate([
-            'blog_title' => 'required|max:255',
-            'category'   => 'required',
-            'slug'       => 'required|alpha_dash',
-            'blog_contents'   => 'required'
+            'blog_title'    => 'required|max:255',
+            'category'      => 'required',
+            'slug'          => 'required|alpha_dash',
+            'blog_contents' => 'required'
         ]);
 
         Article::insert([
@@ -40,6 +40,7 @@ class ArticleController extends Controller
             'title'               => $request->input('blog_title'),
             'slug'                => $request->input('slug'),
             'contents'            => $request->input('blog_contents'),
+            'image_path'          => $request->input('image_path'),
             'updated_user_id'     => Auth::user()->id
         ]);
 

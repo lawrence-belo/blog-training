@@ -51,6 +51,14 @@
                 </div>
             </div>
             <div class="form-group">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input id="image_path" name="image_path" type="text" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <a href="#" id="ckfinder-popup" class="btn btn-success">Select Image</a>
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="col-sm-10 col-sm-offset-2">
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
@@ -60,8 +68,36 @@
 @endsection
 
 @section('custom_js')
+    @include('ckfinder::setup')
     <script type="text/javascript" src="{{ asset('ckeditor/ckeditor.js') }}"></script>
     <script>
-        CKEDITOR.replace('blog_contents');
+        var editor = CKEDITOR.replace('blog_contents');
+        CKFinder.setupCKEditor(editor);
+
+        var button1 = document.getElementById( 'ckfinder-popup' );
+
+        button1.onclick = function() {
+            selectFileWithCKFinder( 'image_path' );
+        };
+
+        function selectFileWithCKFinder( elementId ) {
+            CKFinder.popup( {
+                chooseFiles: true,
+                width: 800,
+                height: 600,
+                onInit: function( finder ) {
+                    finder.on( 'files:choose', function( evt ) {
+                        var file = evt.data.files.first();
+                        var output = document.getElementById( elementId );
+                        output.value = file.getUrl();
+                    } );
+
+                    finder.on( 'file:choose:resizedImage', function( evt ) {
+                        var output = document.getElementById( elementId );
+                        output.value = evt.data.resizedUrl;
+                    } );
+                }
+            } );
+        }
     </script>
 @endsection

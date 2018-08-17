@@ -9,6 +9,9 @@
                 <h5>{{ $article->author()->first()->first_name }} {{ $article->author()->first()->last_name }}</h5>
                 <span class="label label-primary">{{ $article->category()->first()->name }}</span>
                 <div class="col-md-12">
+                    <img src="{{ $article->image_path }}">
+                </div>
+                <div class="col-md-12">
                     {!! $article->contents !!}
                 </div>
             </div>
