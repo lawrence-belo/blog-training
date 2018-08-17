@@ -7,6 +7,7 @@
     @endif
     <div class="row">
         <h3>User List</h3>
+        <a href="{{ url('/add_user') }}" class="btn btn-primary">Add User</a>
         <table class="table">
             <thead>
                 <tr>

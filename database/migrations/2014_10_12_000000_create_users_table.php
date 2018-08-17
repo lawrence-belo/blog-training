@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('last_name');
             $table->string('password');
             $table->integer('role');
+            $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
             $table->softDeletes();

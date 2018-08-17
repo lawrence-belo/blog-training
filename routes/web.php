@@ -19,7 +19,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
     // users
+    Route::get('/add_user', 'HomeController@addUser');
     Route::get('/update_user/{id}', 'HomeController@updateUser');
+    Route::post('/save_new_user', 'HomeController@saveNewUser')->name('save_new_user');
     Route::post('/save_user_update', 'HomeController@saveUserUpdates')->name('save_user_update');
     Route::get('/delete_user/{id}', 'HomeController@deleteUser');
 

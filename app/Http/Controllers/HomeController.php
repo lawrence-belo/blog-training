@@ -28,6 +28,11 @@ class HomeController extends Controller
         return view('users', ['users' =>  User::orderBy('last_name')->paginate(10)]);
     }
 
+    public function addUser()
+    {
+        return view('add_user');
+    }
+
     /**
      * Remove user from user list (soft delete: see User model)
      *
@@ -52,6 +57,38 @@ class HomeController extends Controller
     {
         //do something
         return view('edit_user', ['user' => User::findOrFail($user_id)]);
+    }
+
+    /**
+     * Add a new user
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveNewUser(Request $request)
+    {
+        $user_data = $request->validate([
+            'username'   => [
+                'required',
+                'min:6',
+                'max:255',
+                Rule::unique('users')
+            ],
+            'first_name' => 'required|max:255',
+            'last_name'  => 'required|max:255',
+            'password'   => 'required|string|min:6|confirmed'
+        ]);
+
+        User::insert([
+            'username'   => $user_data['username'],
+            'first_name' => $user_data['first_name'],
+            'last_name'  => $user_data['last_name'],
+            'role'       => $request->input('role'),
+            'password'   => bcrypt($user_data['password'])
+        ]);
+
+        return redirect('/home')
+            ->with('status', 'User ' . $user_data['username'] . ' successfully created!');
     }
 
     /**
