@@ -30,4 +30,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/add_category', 'ArticleCategoryController@addCategory');
     Route::post('/update_category/{id}', 'ArticleCategoryController@updateCategory');
     Route::get('/delete_category/{id}', 'ArticleCategoryController@deleteCategory');
+
+    // articles
+    Route::get('/articles', 'ArticleController@index');
+    Route::get('/create_article', 'ArticleController@createArticle');
+    Route::post('/create_article', 'ArticleController@saveNewArticle');
 });
