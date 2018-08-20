@@ -28,8 +28,8 @@
                         <td>{{ $user->created_at }}</td>
                         <td>{{ $user->updated_at }}</td>
                         <td>
-                            <a href="{{ url('update_user/' . $user->id) }}" class="btn btn-xs btn-primary">Update</a>
-                            <a href="{{ url('delete_user/' . $user->id) }}" class="btn btn-xs btn-danger">Delete</a>
+                            <a href="{{ url('update_user/' . $user->id) }}" class="update_button btn btn-xs btn-primary">Update</a>
+                            <a href="{{ url('delete_user/' . $user->id) }}" class="delete_button btn btn-xs btn-danger">Delete</a>
                         </td>
                     </tr>
                 @endforeach

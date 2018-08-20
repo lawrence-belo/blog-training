@@ -17,7 +17,7 @@ class UserEditTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/login')
-                ->type('username', 'testuser1')
+                ->type('username', 'testadmin1')
                 ->type('password', 'abcd1234')
                 ->click('button[type="submit"]');
             

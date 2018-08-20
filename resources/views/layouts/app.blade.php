@@ -45,7 +45,9 @@
                         @guest
                             <li><a href="{{ route('login') }}">Login</a></li>
                         @else
-                            <li><a href="{{ url('/home') }}">Users</a></li>
+                            @if (Auth::user()->isAdmin())
+                                <li><a href="{{ url('/home') }}">Users</a></li>
+                            @endif
                             <li><a href="{{ url('/articles') }}">Articles</a></li>
                             <li><a href="{{ url('/categories') }}">Categories</a></li>
                             <li class="dropdown">

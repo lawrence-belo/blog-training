@@ -84,7 +84,7 @@ class UserLoginTest extends DuskTestCase
                     ->type('username', 'testuser1')
                     ->type('password', 'abcd1234')
                     ->click('button[type="submit"]')
-                    ->waitForText('User List')
+                    ->waitForText('Articles')
 
                     // on successful login the login buttons disappear
                     ->assertDontSee('Login');

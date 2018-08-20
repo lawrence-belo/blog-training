@@ -16,7 +16,11 @@ class ArticleCategoryController extends Controller
 
     public function addCategory(Request $request)
     {
-        $category_name = $request->input('category_name');
+        $request->validate([
+            'new_category_name' => 'required|unique:article_category,name'
+        ]);
+
+        $category_name = $request->input('new_category_name');
         ArticleCategory::insert([
             'name'            => $category_name,
             'updated_user_id' => Auth::user()->id
@@ -27,10 +31,14 @@ class ArticleCategoryController extends Controller
 
     public function updateCategory(Request $request, $category_id)
     {
+        $request->validate([
+            'category_name_' . $category_id => 'required|unique:article_category,name'
+        ]);
+
         $category = ArticleCategory::findOrFail($category_id);
         $category_old_name = $category->name;
 
-        $category->name           = $request->input('category_name');
+        $category->name            = $request->input('category_name_' . $category_id);
         $category->updated_user_id = Auth::user()->id;
 
         $category->save();

@@ -6,8 +6,24 @@ use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class UserRegistrationTest extends DuskTestCase
+class UserAddTest extends DuskTestCase
 {
+    public function testAdminLogin()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/login')
+                ->assertSee('Login')
+                ->assertSee('Username')
+                ->assertSee('Password')
+                ->type('username', 'testadmin1')
+                ->type('password', 'abcd1234')
+                ->click('button[type="submit"]')
+                ->waitForText('User List')
+
+                // on successful login the login buttons disappear
+                ->assertSee('Users');
+        });
+    }
     /**
      * Verify that all the fields are available
      *
@@ -16,14 +32,14 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationUITest()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->assertSee('Username')
                 ->assertSee('First Name')
                 ->assertSee('Last Name')
                 ->assertSee('Password')
                 ->assertSee('Confirm Password')
                 ->assertSee('Role')
-                ->assertSee('Register');
+                ->assertSee('Save');
         });
     }
 
@@ -35,7 +51,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationNoUsername()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', '')
                 ->type('first_name', 'Test')
                 ->type('last_name', 'User')
@@ -44,7 +60,7 @@ class UserRegistrationTest extends DuskTestCase
                 ->click('button[type="submit"]')
 
                 // we're still on the registration page
-                ->assertSee('Register');
+                ->assertSee('Save');
         });
     }
 
@@ -56,7 +72,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationUsernameLessChars()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'abc')
                 ->type('first_name', 'Test')
                 ->type('last_name', 'User')
@@ -78,7 +94,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationNoFirstname()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'Tester1')
                 ->type('first_name', '')
                 ->type('last_name', 'User')
@@ -87,7 +103,7 @@ class UserRegistrationTest extends DuskTestCase
                 ->click('button[type="submit"]')
 
                 // we're still on the registration page
-                ->assertSee('Register');
+                ->assertSee('Save');
         });
     }
 
@@ -99,7 +115,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationNoLastname()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'Tester1')
                 ->type('first_name', 'Test')
                 ->type('last_name', '')
@@ -108,7 +124,7 @@ class UserRegistrationTest extends DuskTestCase
                 ->click('button[type="submit"]')
 
                 // we're still on the registration page
-                ->assertSee('Register');
+                ->assertSee('Save');
         });
     }
 
@@ -120,7 +136,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationNoPassword()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'Tester1')
                 ->type('first_name', 'Test')
                 ->type('last_name', 'User')
@@ -129,7 +145,7 @@ class UserRegistrationTest extends DuskTestCase
                 ->click('button[type="submit"]')
 
                 // we're still on the registration page
-                ->assertSee('Register');
+                ->assertSee('Save');
         });
     }
 
@@ -141,7 +157,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationNoConfirmPassword()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'Tester1')
                 ->type('first_name', 'Test')
                 ->type('last_name', 'User')
@@ -150,7 +166,7 @@ class UserRegistrationTest extends DuskTestCase
                 ->click('button[type="submit"]')
 
                 // we're still on the registration page
-                ->assertSee('Register');
+                ->assertSee('Save');
         });
     }
 
@@ -162,7 +178,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationPasswordNotMatch()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'Tester1')
                 ->type('first_name', 'Test')
                 ->type('last_name', 'User')
@@ -184,7 +200,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationPasswordLessChars()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'Tester1')
                 ->type('first_name', 'Test')
                 ->type('last_name', 'User')
@@ -206,7 +222,7 @@ class UserRegistrationTest extends DuskTestCase
     public function testRegistrationNonUniqUsername()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', 'testuser1')
                 ->type('first_name', 'aaaa')
                 ->type('last_name', 'aaaa')
@@ -229,7 +245,7 @@ class UserRegistrationTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $username = 'Tester' . uniqid();
-            $browser->visit('/register')
+            $browser->visit('/add_user')
                 ->type('username', $username)
                 ->type('first_name', 'aaaa')
                 ->type('last_name', 'aaaa')
