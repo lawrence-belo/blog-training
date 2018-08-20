@@ -38,7 +38,8 @@ class ArticleCategoryEditTest extends DuskTestCase
     public function testEditCategoryBlankName()
     {
         $this->browse(function (Browser $browser) {
-            $category = 'testing';
+            // first we add a category (we'll use a name starting with 'A' so that it appears on the top of the page)
+            $category = 'AAATestCategory'.uniqid();
 
             // create a category 1st
             $browser->visit('/categories')
@@ -49,8 +50,8 @@ class ArticleCategoryEditTest extends DuskTestCase
 
             // refresh page -> edit the category
             $browser->visit('/categories')
-                ->type('table tr:nth-child(2) td input[type="text"]', '')
-                ->click('table tr:nth-child(2) td .update_category');
+                ->type('table tr:nth-child(1) td input[type="text"]', '')
+                ->click('table tr:nth-child(1) td .update_category');
 
             // verify no status messages appear
             $browser->assertMissing('div.alert');
@@ -65,15 +66,17 @@ class ArticleCategoryEditTest extends DuskTestCase
     public function testEditCategory()
     {
         $this->browse(function (Browser $browser) {
-            $category = 'testing'.uniqid();
+
+            // first we add a category (we'll use a name starting with 'A' so that it appears on the top of the page)
+            $category = 'AAATestCategory'.uniqid();
 
             $browser->visit('/categories')
                 ->waitForText('Category');
 
-            $old_category = $browser->value('table tr:nth-child(2) td input[type="text"]');
+            $old_category = $browser->value('table tr:nth-child(1) td input[type="text"]');
             // edit the category
-            $browser->type('table tr:nth-child(2) td input[type="text"]', $category)
-                ->click('table tr:nth-child(2) td .update_category');
+            $browser->type('table tr:nth-child(1) td input[type="text"]', $category)
+                ->click('table tr:nth-child(1) td .update_category');
 
             // verify category has been successfully added
             $browser->waitForText('Category ' . $old_category . ' has been changed to ' . $category . '.');
@@ -89,14 +92,21 @@ class ArticleCategoryEditTest extends DuskTestCase
     public function testEditCategoryNonUniqName()
     {
         $this->browse(function (Browser $browser) {
-            $category = 'testing';
+            $category = 'testing'.uniqid();
+
+            // create a category 1st
+            $browser->visit('/categories')
+                ->waitForText('Category')
+                ->assertSeeIn('h3', 'Categories')
+                ->type('new_category_name', $category)
+                ->click('#add_category');
 
             $browser->visit('/categories')
                 ->waitForText('Category');
 
             // edit the category
-            $browser->type('table tr:nth-child(2) td input[type="text"]', $category)
-                ->click('table tr:nth-child(2) td .update_category');
+            $browser->type('table tr:nth-child(1) td input[type="text"]', $category)
+                ->click('table tr:nth-child(1) td .update_category');
 
             // verify category has been successfully added
             $browser->waitForText('The category name has already been taken.');

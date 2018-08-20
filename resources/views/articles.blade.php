@@ -8,7 +8,7 @@
             @endif
         </div>
         <div class="row">
-            <a href="{{ url('/create_article') }}" class="btn btn-primary">New Post</a>
+            <a href="{{ url('/create_article') }}" id="new_post" class="btn btn-primary">New Post</a>
         </div>
         @foreach ($articles as $article)
             <div class="row">

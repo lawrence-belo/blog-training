@@ -46,7 +46,7 @@
                             <td>{{ $category->created_at }}</td>
                             <td>{{ $category->updated_at }}</td>
                             <td>
-                                <a href="{{ url('delete_category/' . $category->id) }}" class="btn btn-sm btn-danger">Delete</a>
+                                <a href="{{ url('delete_category/' . $category->id) }}" class="delete_category btn btn-sm btn-danger">Delete</a>
                             </td>
                         </tr>
                     @endforeach
