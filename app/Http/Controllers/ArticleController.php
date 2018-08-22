@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Article;
-use App\ArticleCategory;
+use App\Repositories\ArticleCategoryRepository;
+use App\Repositories\ArticleRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
+    protected $article;
+    protected $article_category;
+
+    public function __construct()
+    {
+        $this->article = new ArticleRepository;
+        $this->article_category = new ArticleCategoryRepository;
+    }
+
     public function index()
     {
-        return view('articles', ['articles' => Article::orderBy('created_at', 'desc')->get()]);
+        return view('front.articles', ['articles' => $this->article->all()->sortByDesc('created_at')]);
     }
 
     /**
@@ -19,7 +28,7 @@ class ArticleController extends Controller
      */
     public function createArticle()
     {
-        return view('create_article', ['categories' => ArticleCategory::orderBy('name')->get()]);
+        return view('front.create_article', ['categories' => $this->article_category->all()->sortBy('name')]);
     }
 
     /**
@@ -29,9 +38,9 @@ class ArticleController extends Controller
      */
     public function editArticle($article_id)
     {
-        return view('edit_article', [
-            'categories' => ArticleCategory::orderBy('name')->get(),
-            'article'    => Article::findOrFail($article_id)
+        return view('front.edit_article', [
+            'categories' => $this->article_category->all()->sortBy('name'),
+            'article'    => $this->article->find($article_id)
         ]);
     }
 
@@ -50,7 +59,7 @@ class ArticleController extends Controller
             'blog_contents' => 'required'
         ]);
 
-        Article::insert([
+        $this->article->create([
             'article_category_id' => $request->input('category'),
             'title'               => $request->input('blog_title'),
             'slug'                => $request->input('slug'),
@@ -78,15 +87,15 @@ class ArticleController extends Controller
             'blog_contents' => 'required'
         ]);
 
-        $article = Article::findOrFail($article_id);
-        $article->article_category_id = $request->input('category');
-        $article->title               = $request->input('blog_title');
-        $article->slug                = $request->input('slug');
-        $article->contents            = $request->input('blog_contents');
-        $article->image_path          = $request->input('image_path');
-        $article->updated_user_id     = Auth::user()->id;
+        $this->article->update([
+            'article_category_id' => $request->input('category'),
+            'title'               => $request->input('blog_title'),
+            'slug'                => $request->input('slug'),
+            'contents'            => $request->input('blog_contents'),
+            'image_path'          => $request->input('image_path'),
+            'updated_user_id'     => Auth::user()->id
+        ], $article_id);
 
-        $article->save();
         return redirect('/articles')->with('status', 'Blog post <b>' . $request->input('blog_title') . '</b> has been successfully updated!');
     }
 
@@ -98,10 +107,8 @@ class ArticleController extends Controller
      */
     public function deleteArticle($article_id)
     {
-        $article = Article::findOrFail($article_id);
-        $title = $article->title;
-
-        $article->delete();
+        $title = $this->article->find($article_id)->title;
+        $this->article->delete($article_id);
 
         return redirect('/articles')->with('status', 'Blog post <b>' . $title . '</b> has been successfully deleted!');
     }

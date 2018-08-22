@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\ArticleCategory;
+use App\Repositories\ArticleCategoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
 class ArticleCategoryController extends Controller
 {
+    protected $article_category;
+
+    public function __construct()
+    {
+        $this->article_category = new ArticleCategoryRepository;
+    }
+
     public function index()
     {
-        return view('categories', ['categories' => ArticleCategory::orderBy('name')->get()]);
+        return view('front.categories', ['categories' => $this->article_category->all()->sortBy('name')]);
     }
 
     public function addCategory(Request $request)
@@ -21,7 +28,7 @@ class ArticleCategoryController extends Controller
         ]);
 
         $category_name = $request->input('new_category_name');
-        ArticleCategory::insert([
+        $this->article_category->create([
             'name'            => $category_name,
             'updated_user_id' => Auth::user()->id
         ]);
@@ -35,22 +42,22 @@ class ArticleCategoryController extends Controller
             'category_name_' . $category_id => 'required|unique:article_category,name'
         ]);
 
-        $category = ArticleCategory::findOrFail($category_id);
-        $category_old_name = $category->name;
+        $category_old_name = $this->article_category->find($category_id)->name;
 
-        $category->name            = $request->input('category_name_' . $category_id);
-        $category->updated_user_id = Auth::user()->id;
+        $this->article_category->update([
+            'name'            => $request->input('category_name_' . $category_id),
+            'updated_user_id' => Auth::user()->id
+        ], $category_id);
 
-        $category->save();
+        $category_name = $this->article_category->find($category_id)->name;
 
-        return redirect('/categories')->with('status', 'Category <b>' . $category_old_name . '</b> has been changed to <b>' . $category->name  . '</b>.');
+        return redirect('/categories')->with('status', 'Category <b>' . $category_old_name . '</b> has been changed to <b>' . $category_name  . '</b>.');
     }
 
     public function deleteCategory($category_id)
     {
-        $category = ArticleCategory::findOrFail($category_id);
-        $category_name = $category->name;
-        $category->delete();
+        $category_name = $this->article_category->find($category_id)->name;
+        $this->article_category->delete($category_id);
 
         return redirect('/categories')->with('status', 'Category <b>' . $category_name . '</b> has been successfully deleted!');
     }

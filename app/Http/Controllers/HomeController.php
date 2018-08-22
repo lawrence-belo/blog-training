@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class HomeController extends Controller
 {
+    protected $user;
+
     /**
      * Create a new controller instance.
      *
@@ -15,6 +17,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+        $this->user = new UserRepository;
         $this->middleware('auth');
     }
 
@@ -25,12 +28,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('users', ['users' =>  User::orderBy('last_name')->paginate(10)]);
+        return view('admin.users', ['users' =>  $this->user->paginate('last_name', 10)]);
     }
 
     public function addUser()
     {
-        return view('add_user');
+        return view('admin.add_user');
     }
 
     /**
@@ -40,10 +43,8 @@ class HomeController extends Controller
      */
     public function deleteUser($user_id)
     {
-        $user = User::findOrFail($user_id);
-        $username = $user->username;
-
-        $user->delete();
+        $username = $this->user->find($user_id)->username;
+        $this->user->delete($user_id);
 
         return redirect('/home')->with('status', 'User <b>' . $username . '</b> has been successfully deleted!');
     }
@@ -56,7 +57,7 @@ class HomeController extends Controller
     public function updateUser($user_id)
     {
         //do something
-        return view('edit_user', ['user' => User::findOrFail($user_id)]);
+        return view('admin.edit_user', ['user' => $this->user->find($user_id)]);
     }
 
     /**
@@ -79,13 +80,13 @@ class HomeController extends Controller
             'password'   => 'required|string|min:6|confirmed'
         ]);
 
-        User::insert([
-            'username'   => $user_data['username'],
-            'first_name' => $user_data['first_name'],
-            'last_name'  => $user_data['last_name'],
-            'role'       => $request->input('role'),
-            'password'   => bcrypt($user_data['password'])
-        ]);
+        $this->user->create($request->only([
+            'username',
+            'first_name',
+            'last_name',
+            'role',
+            'password'
+        ]));
 
         return redirect('/home')
             ->with('status', 'User ' . $user_data['username'] . ' successfully created!');
@@ -99,32 +100,28 @@ class HomeController extends Controller
      */
     public function saveUserUpdates(Request $request)
     {
-        $user = User::find($request->input('user_id'));
-
-        $user_data = $request->validate([
+        $user_id = $request->input('user_id');
+        $request->validate([
             'username'   => [
                 'required',
                 'min:6',
                 'max:255',
-                Rule::unique('users')->ignore($user->id)
+                Rule::unique('users')->ignore($user_id)
             ],
             'first_name' => 'required|max:255',
             'last_name'  => 'required|max:255',
             'password'   => 'nullable|string|min:6|confirmed'
         ]);
 
-        $user->username   = $user_data['username'];
-        $user->first_name = $user_data['first_name'];
-        $user->last_name  = $user_data['last_name'];
-        $user->role       = $request->input('role');
+        $this->user->update($request->only([
+            'username',
+            'first_name',
+            'last_name',
+            'role',
+            'password'
+        ]), $request->input('user_id'));
 
-        // only update the password if password field is not empty
-        if (!empty($password)) {
-            $user->password = bcrypt($user_data['password']);
-        }
-
-        $user->save();
-        return redirect('update_user/' . $user->id)
+        return redirect('update_user/' . $user_id)
             ->with('status', 'User data successfully updated!');
     }
 }
