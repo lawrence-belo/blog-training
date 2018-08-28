@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('common.app')
 
 @section('content')
     <div class="container">
@@ -8,17 +8,18 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Add User</div>
+                    <div class="panel-heading">Edit User</div>
 
                     <div class="panel-body">
-                        <form class="form-horizontal" method="POST" action="{{ route('save_new_user') }}">
+                        <form class="form-horizontal" method="POST" action="{{ route('save_user_update') }}">
                             {{ csrf_field() }}
 
+                            <input type="hidden" name="user_id" value="{{ $user->id }}">
                             <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
                                 <label for="username" class="col-md-4 control-label">Username</label>
 
                                 <div class="col-md-6">
-                                    <input id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus>
+                                    <input id="username" type="text" class="form-control" name="username" value="{{ old('username', $user->username) }}" required autofocus>
 
                                     @if ($errors->has('username'))
                                         <span class="help-block">
@@ -32,7 +33,7 @@
                                 <label for="first_name" class="col-md-4 control-label">First Name</label>
 
                                 <div class="col-md-6">
-                                    <input id="first_name" type="text" class="form-control" name="first_name" value="{{ old('first_name') }}" required autofocus>
+                                    <input id="first_name" type="text" class="form-control" name="first_name" value="{{ old('first_name', $user->first_name) }}" required autofocus>
 
                                     @if ($errors->has('first_name'))
                                         <span class="help-block">
@@ -46,7 +47,7 @@
                                 <label for="last_name" class="col-md-4 control-label">Last Name</label>
 
                                 <div class="col-md-6">
-                                    <input id="last_name" type="text" class="form-control" name="last_name" value="{{ old('last_name') }}" required autofocus>
+                                    <input id="last_name" type="text" class="form-control" name="last_name" value="{{ old('last_name', $user->last_name) }}" required autofocus>
 
                                     @if ($errors->has('last_name'))
                                         <span class="help-block">
@@ -83,8 +84,8 @@
 
                                 <div class="col-md-6">
                                     <select id="role" class="form-control" name="role" required>
-                                        <option value="0" {{ old('role') == 0 ? 'selected' : '' }}>user</option>
-                                        <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>admin</option>
+                                        <option value="0" {{ old('role', $user->role) == 0 ? 'selected' : '' }}>user</option>
+                                        <option value="1" {{ old('role', $user->role) == 1 ? 'selected' : '' }}>admin</option>
                                     </select>
                                 </div>
                             </div>
@@ -92,7 +93,7 @@
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">
-                                        Save
+                                        Update
                                     </button>
                                 </div>
                             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ArticleRequest;
 use App\Repositories\ArticleCategoryRepository;
 use App\Repositories\ArticleRepository;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class ArticleController extends Controller
 
     public function index()
     {
-        return view('front.articles', ['articles' => $this->article->all()->sortByDesc('created_at')]);
+        return view('front.articles.list', ['articles' => $this->article->all()->sortByDesc('created_at')]);
     }
 
     /**
@@ -28,17 +29,18 @@ class ArticleController extends Controller
      */
     public function createArticle()
     {
-        return view('front.create_article', ['categories' => $this->article_category->all()->sortBy('name')]);
+        return view('front.articles.create_article', ['categories' => $this->article_category->all()->sortBy('name')]);
     }
 
     /**
      * Show a WYSYWIG editor for updating an article
      *
      * @param int $article_id
+     * @return View
      */
     public function editArticle($article_id)
     {
-        return view('front.edit_article', [
+        return view('front.articles.edit_article', [
             'categories' => $this->article_category->all()->sortBy('name'),
             'article'    => $this->article->find($article_id)
         ]);
@@ -47,56 +49,42 @@ class ArticleController extends Controller
     /**
      * Save new article data to database
      *
-     * @param Request $request
+     * @param ArticleRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveNewArticle(Request $request)
+    public function saveNewArticle(ArticleRequest $request)
     {
-        $request->validate([
-            'blog_title'    => 'required|max:255',
-            'category'      => 'required',
-            'slug'          => 'required|alpha_dash',
-            'blog_contents' => 'required'
-        ]);
-
         $this->article->create([
             'article_category_id' => $request->input('category'),
-            'title'               => $request->input('blog_title'),
+            'title'               => $request->input('title'),
             'slug'                => $request->input('slug'),
-            'contents'            => $request->input('blog_contents'),
+            'contents'            => $request->input('contents'),
             'image_path'          => $request->input('image_path'),
             'updated_user_id'     => Auth::user()->id
         ]);
 
-        return redirect('/articles')->with('status', 'Blog post <b>' . $request->input('blog_title') . '</b> has been successfully saved!');
+        return redirect('/articles')->with('status', 'Blog post <b>' . $request->input('title') . '</b> has been successfully saved!');
     }
 
     /**
      * Save updated article data to database
      *
-     * @param Request $request
+     * @param ArticleRequest $request
      * @param $article_id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateArticle(Request $request, $article_id)
+    public function updateArticle(ArticleRequest $request, $article_id)
     {
-        $request->validate([
-            'blog_title'    => 'required|max:255',
-            'category'      => 'required',
-            'slug'          => 'required|alpha_dash',
-            'blog_contents' => 'required'
-        ]);
-
         $this->article->update([
             'article_category_id' => $request->input('category'),
-            'title'               => $request->input('blog_title'),
+            'title'               => $request->input('title'),
             'slug'                => $request->input('slug'),
-            'contents'            => $request->input('blog_contents'),
+            'contents'            => $request->input('contents'),
             'image_path'          => $request->input('image_path'),
             'updated_user_id'     => Auth::user()->id
         ], $article_id);
 
-        return redirect('/articles')->with('status', 'Blog post <b>' . $request->input('blog_title') . '</b> has been successfully updated!');
+        return redirect('/articles')->with('status', 'Blog post <b>' . $request->input('title') . '</b> has been successfully updated!');
     }
 
     /**

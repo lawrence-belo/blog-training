@@ -2,8 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\Article;
-
 class Repository implements RepositoryInterface
 {
     protected $model;

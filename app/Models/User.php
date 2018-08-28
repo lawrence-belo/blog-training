@@ -11,6 +11,9 @@ class User extends Authenticatable
     use Notifiable;
     use SoftDeletes;
 
+    const ROLE_USER  = 0;
+    const ROLE_ADMIN = 1;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -43,6 +46,6 @@ class User extends Authenticatable
      */
     public function isAdmin()
     {
-        return $this->role == 1;
+        return $this->role == User::ROLE_ADMIN;
     }
 }

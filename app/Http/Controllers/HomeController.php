@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class HomeController extends Controller
 {
@@ -28,18 +27,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin.users', ['users' =>  $this->user->paginate('last_name', 10)]);
+        return view('admin.users.list', ['users' =>  $this->user->paginate('last_name', 10)]);
     }
 
     public function addUser()
     {
-        return view('admin.add_user');
+        return view('admin.users.add_user');
     }
 
     /**
      * Remove user from user list (soft delete: see User model)
      *
      * @param int $user_id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteUser($user_id)
     {
@@ -53,33 +53,21 @@ class HomeController extends Controller
      * Show user update form
      *
      * @param int $user_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function updateUser($user_id)
     {
-        //do something
-        return view('admin.edit_user', ['user' => $this->user->find($user_id)]);
+        return view('admin.users.edit_user', ['user' => $this->user->find($user_id)]);
     }
 
     /**
      * Add a new user
      *
-     * @param Request $request
+     * @param UserRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveNewUser(Request $request)
+    public function saveNewUser(UserRequest $request)
     {
-        $user_data = $request->validate([
-            'username'   => [
-                'required',
-                'min:6',
-                'max:255',
-                Rule::unique('users')
-            ],
-            'first_name' => 'required|max:255',
-            'last_name'  => 'required|max:255',
-            'password'   => 'required|string|min:6|confirmed'
-        ]);
-
         $this->user->create($request->only([
             'username',
             'first_name',
@@ -89,29 +77,18 @@ class HomeController extends Controller
         ]));
 
         return redirect('/home')
-            ->with('status', 'User ' . $user_data['username'] . ' successfully created!');
+            ->with('status', 'User ' . $request->input('username') . ' successfully created!');
     }
 
     /**
      * Validate and save user updates
      *
-     * @param Request $request
+     * @param UserRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveUserUpdates(Request $request)
+    public function saveUserUpdates(UserRequest $request)
     {
         $user_id = $request->input('user_id');
-        $request->validate([
-            'username'   => [
-                'required',
-                'min:6',
-                'max:255',
-                Rule::unique('users')->ignore($user_id)
-            ],
-            'first_name' => 'required|max:255',
-            'last_name'  => 'required|max:255',
-            'password'   => 'nullable|string|min:6|confirmed'
-        ]);
 
         $this->user->update($request->only([
             'username',
@@ -119,7 +96,7 @@ class HomeController extends Controller
             'last_name',
             'role',
             'password'
-        ]), $request->input('user_id'));
+        ]), $user_id);
 
         return redirect('update_user/' . $user_id)
             ->with('status', 'User data successfully updated!');

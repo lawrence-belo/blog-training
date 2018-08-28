@@ -6,7 +6,6 @@ use App\Repositories\ArticleCategoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class ArticleCategoryController extends Controller
 {
     protected $article_category;
@@ -18,7 +17,7 @@ class ArticleCategoryController extends Controller
 
     public function index()
     {
-        return view('front.categories', ['categories' => $this->article_category->all()->sortBy('name')]);
+        return view('front.categories.list', ['categories' => $this->article_category->all()->sortBy('name')]);
     }
 
     public function addCategory(Request $request)
