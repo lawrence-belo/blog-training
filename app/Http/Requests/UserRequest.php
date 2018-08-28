@@ -25,9 +25,14 @@ class UserRequest extends FormRequest
     public function rules()
     {
         $user_id = $this->input('user_id');
-        $unique_rule = $user_id ?
-            Rule::unique('users')->ignore($user_id) :
-            Rule::unique('users');
+
+        if ($user_id) {
+            $unique_rule = Rule::unique('users')->ignore($user_id);
+            $password_rule = 'nullable|string|min:6|confirmed';
+        } else {
+            $unique_rule = Rule::unique('users');
+            $password_rule = 'required|string|min:6|confirmed';
+        }
 
         return [
             'username'   => [
@@ -38,7 +43,7 @@ class UserRequest extends FormRequest
             ],
             'first_name' => 'required|max:255',
             'last_name'  => 'required|max:255',
-            'password'   => 'nullable|string|min:6|confirmed'
+            'password'   => $password_rule
         ];
     }
 }
