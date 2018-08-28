@@ -16,8 +16,8 @@
                     <h3>{{ $article->title }}</h3>
                 </div>
                 <div class="col-md-3 col-md-offset-6">
-                    <a href="{{ url('/update_article/' . $article->id) }}" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="{{ url('/delete_article/' . $article->id) }}" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="{{ url('/update_article/' . $article->id) }}" class="update_article btn btn-sm btn-primary">Edit</a>
+                    <a href="{{ url('/delete_article/' . $article->id) }}" class="delete_article btn btn-sm btn-danger">Delete</a>
                 </div>
                 <div class="col-md-12">
                     <h5>{{ $article->author()->first()->first_name }} {{ $article->author()->first()->last_name }}</h5>

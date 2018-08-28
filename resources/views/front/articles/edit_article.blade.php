@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h3>Create Article</h3>
+        <h3>Edit Article</h3>
         <form class="form-horizontal" method="POST" action="{{ url('/update_article/' . $article->id) }}">
             {{ csrf_field() }}
             <div class="form-group">
@@ -62,7 +62,7 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-10 col-sm-offset-2">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button id="save_article" type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
